@@ -1,10 +1,10 @@
 package com.github.mfamador.saa.model;
 
-import lombok.Value;
+import lombok.Data;
 
 import java.util.List;
 
-@Value
+@Data
 public class Document {
 
     private String id;
