@@ -6,6 +6,8 @@ import lombok.extern.log4j.Log4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +34,26 @@ public class DocumentServiceImpl implements DocumentService {
             SearchResponse response = client
               .prepareSearch("documents")
               .setTypes("document")
-              .setSize(10)
+              .setFrom(0)
+              .setSize(1000)
+              .addAggregation(
+                AggregationBuilders.terms("cloud").field("keyPhrases")
+              )
               .get();
 
             log.debug("total hits: " + response.getHits().getTotalHits());
+
+            response.getAggregations()
+              .asMap()
+              .entrySet().stream()
+              .forEach(e -> {
+                  if("cloud".equals(e.getKey())) {
+
+                      ((StringTerms)e.getValue()).getBuckets().forEach(b -> {
+                          log.debug(b.getKey() + " - " + b.getDocCount());
+                      });
+                  }
+              });
 
             for (SearchHit hit : response.getHits()) {
                 Document doc = new Document();
@@ -45,6 +63,8 @@ public class DocumentServiceImpl implements DocumentService {
                         doc.setTitle((String) e.getValue());
                     } else if ("body".equals(e.getKey())) {
                         doc.setBody((String) e.getValue());
+                    } else if ("sentiment".equals(e.getKey())) {
+                        doc.setSentiment((String) e.getValue());
                     } else if ("keyPhrases".equals(e.getKey())) {
                         doc.setKeyPhrases((List<String>) e.getValue());
                     }

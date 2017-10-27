@@ -13,5 +13,7 @@ public class Document {
 
     private String body;
 
+    private String sentiment;
+
     private List<String> keyPhrases;
 }
