@@ -2,4 +2,6 @@ target
 *.imlxs
 .#*
 logs
-*.sh
+.idea
+*.iml
+no-git*

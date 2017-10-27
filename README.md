@@ -7,3 +7,9 @@ Simple api
 ```
 ./start-locally.sh
 ```
+
+## Invoking the API
+
+```
+curl -XGET http://localhost:8080/saa/
+```
