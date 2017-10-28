@@ -1,4 +1,4 @@
-# Sentiment analysis api
+# Sentiment analysis API
 
 Spring Boot and Elasticsearch API
 
