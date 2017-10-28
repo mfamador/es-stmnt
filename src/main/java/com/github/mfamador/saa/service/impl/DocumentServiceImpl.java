@@ -5,6 +5,7 @@ import com.github.mfamador.saa.service.DocumentService;
 import lombok.extern.log4j.Log4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
@@ -13,6 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 @Log4j
 @Service
@@ -31,11 +36,38 @@ public class DocumentServiceImpl implements DocumentService {
         List<Document> docList = new ArrayList<>();
 
         if (client != null) {
+
+            /* Sample query
+                curl -XPOST 'http://localhost:9200/documents/_search?pretty' -d '{
+                    "from": 0, "size": 100,
+                    "query": {
+                        "bool" : {
+                            "must": [
+                               {"query_string": {
+                                   "query": "volvo AND 60",
+                                   "fields": ["title", "body"]}}],
+                            "filter": {
+                                  "bool": {
+                                      "should": [
+                                          {"term": { "sentiment": "p"}},
+                                          {"term": { "sentiment": "n"}}]}}}},
+                    "aggs": {"cloud": {"terms": { "field" : "keyPhrases"}}}
+                }'
+             */
+
             SearchResponse response = client
               .prepareSearch("documents")
               .setTypes("document")
               .setFrom(0)
-              .setSize(1000)
+              .setSize(100)
+              .setQuery(boolQuery()
+                .must(
+                  queryStringQuery("volvo AND 60").field("title").field("body"))
+                .filter(
+                  boolQuery()
+                    .should(termQuery("sentiment", "v"))
+                    .should(termQuery("sentiment", "n"))
+                  ))
               .addAggregation(
                 AggregationBuilders.terms("cloud").field("keyPhrases")
               )
@@ -73,6 +105,10 @@ public class DocumentServiceImpl implements DocumentService {
                 docList.add(doc);
             }
         }
+
+        docList.forEach(d -> {
+            log.debug("doc : " + d.getTitle() + " (" + d.getSentiment() + ")");
+        });
 
         return docList;
     }
