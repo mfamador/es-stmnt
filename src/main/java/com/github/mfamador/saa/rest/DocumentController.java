@@ -1,7 +1,7 @@
 package com.github.mfamador.saa.rest;
 
-import com.github.mfamador.saa.model.SAARequest;
-import com.github.mfamador.saa.model.SAAResponse;
+import com.github.mfamador.saa.model.SearchRequest;
+import com.github.mfamador.saa.model.SearchResult;
 import com.github.mfamador.saa.service.DocumentService;
 import com.github.mfamador.saa.service.impl.DocumentServiceImpl;
 import lombok.extern.log4j.Log4j;
@@ -26,10 +26,10 @@ public class DocumentController {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<SAAResponse> create(@RequestBody SAARequest request) {
+    public ResponseEntity<SearchResult> create(@RequestBody SearchRequest request) {
 
-        log.debug("find request: " + request);
+        log.debug("request: " + request);
 
-        return new ResponseEntity<SAAResponse>(service.find(request), HttpStatus.CREATED);
+        return new ResponseEntity<SearchResult>(service.find(request), HttpStatus.CREATED);
     }
 }

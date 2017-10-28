@@ -1,10 +1,13 @@
 package com.github.mfamador.saa.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.mfamador.saa.model.Document;
-import com.github.mfamador.saa.model.SAARequest;
-import com.github.mfamador.saa.model.SAAResponse;
+import com.github.mfamador.saa.model.SearchRequest;
+import com.github.mfamador.saa.model.SearchResult;
 import com.github.mfamador.saa.service.DocumentService;
 import lombok.extern.log4j.Log4j;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -14,8 +17,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -31,68 +32,46 @@ public class DocumentServiceImpl implements DocumentService {
         this.client = client;
     }
 
+    public SearchResult find(SearchRequest request) {
 
-    public SAAResponse find(SAARequest request) {
-
-        SAAResponse result = new SAAResponse();
-
-        List<Document> docList = new ArrayList<>();
+        SearchResult result = new SearchResult();
 
         if (client != null) {
-
-            /* Sample query
-                curl -XPOST 'http://localhost:9200/documents/_search?pretty' -d '{
-                    "from": 0, "size": 100,
-                    "query": {
-                        "bool" : {
-                            "must": [
-                               {"query_string": {
-                                   "query": "volvo AND 60",
-                                   "fields": ["title", "body"]}}],
-                            "filter": {
-                                  "bool": {
-                                      "should": [
-                                          {"term": { "sentiment": "p"}},
-                                          {"term": { "sentiment": "n"}}]}}}},
-                    "aggs": {"cloud": {"terms": { "field" : "keyPhrases"}}}
-                }'
-             */
-
-            BoolQueryBuilder bqb = boolQuery().must(queryStringQuery(request.getQuery()).field("title").field("body"));
+            BoolQueryBuilder query = boolQuery().must(queryStringQuery(request.getQuery()).field("title").field("body"));
 
             if (request.getSentiment() != null && !request.getSentiment().isEmpty()) {
                 String[] sentiments = request.getSentiment().split(",");
-
                 BoolQueryBuilder fbqb = boolQuery();
-                for(String sentiment : sentiments) {
+                for (String sentiment : sentiments)
                     fbqb.should(termQuery("sentiment", sentiment));
-                }
-
-                bqb.filter(fbqb);
+                query.filter(fbqb);
             }
 
-            SearchResponse response = client
-              .prepareSearch("documents")
+            SearchRequestBuilder searchRequest = client.prepareSearch("documents")
               .setTypes("document")
-              .setFrom(0)
-              .setSize(100)
-              .setQuery(bqb)
-              .addAggregation(
-                AggregationBuilders.terms("cloud").field("keyPhrases")
-              )
-              .get();
+              .setFrom(request.getFrom())
+              .setSize(request.getSize() > 100 ? 100 : request.getSize())
+              .setQuery(query);
 
-            response.getAggregations()
-              .asMap()
-              .entrySet().stream()
-              .forEach(e -> {
-                  if ("cloud".equals(e.getKey())) {
+            if (request.getCloudSize() > 0)
+                searchRequest
+                  .addAggregation(AggregationBuilders.terms("cloud")
+                    .field("keyPhrases").size(request.getCloudSize()));
 
-                      ((StringTerms) e.getValue()).getBuckets().forEach(b -> {
-                          log.debug(b.getKey() + " - " + b.getDocCount());
-                      });
-                  }
-              });
+            SearchResponse response = searchRequest.get();
+
+            if (request.getCloudSize() > 0) {
+                response.getAggregations()
+                  .asMap()
+                  .entrySet().stream()
+                  .forEach(e -> {
+                      if ("cloud".equals(e.getKey())) {
+                          ((StringTerms) e.getValue()).getBuckets().forEach(b -> {
+                              result.addKeyPhrase((String) b.getKey(), b.getDocCount());
+                          });
+                      }
+                  });
+            }
 
             for (SearchHit hit : response.getHits()) {
                 Document doc = new Document();
@@ -109,15 +88,18 @@ public class DocumentServiceImpl implements DocumentService {
                     }
                 });
 
-                docList.add(doc);
+                result.addDoc(doc);
             }
 
-            log.debug("total hits: " + response.getHits().getTotalHits());
+            result.setCount(response.getHits().getTotalHits());
         }
 
-        docList.forEach(d -> {
-            log.debug("doc : " + d.getTitle() + " (" + d.getSentiment() + ")");
-        });
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            log.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
+        } catch (JsonProcessingException ex) {
+            log.error(ex.getMessage());
+        }
 
         return result;
     }

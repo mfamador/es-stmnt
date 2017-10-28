@@ -37,6 +37,20 @@ Invoking the API
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
     "from": 0, "size": 100,
     "query": "a AND b AND c",
-    "sentiment": "n,v"
+    "sentiment": "n,v",
+    "cloudSize": 10
 }'
 ```
+
+```
+curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
+    "query": "a AND b AND c"
+}'
+```
+
+Request default values:
+```
+- from: 0
+- size: 50
+- cloudSize: 5`
+``

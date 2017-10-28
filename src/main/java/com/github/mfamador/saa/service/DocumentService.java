@@ -1,9 +1,9 @@
 package com.github.mfamador.saa.service;
 
-import com.github.mfamador.saa.model.SAARequest;
-import com.github.mfamador.saa.model.SAAResponse;
+import com.github.mfamador.saa.model.SearchRequest;
+import com.github.mfamador.saa.model.SearchResult;
 
 public interface DocumentService {
 
-    SAAResponse find(SAARequest request);
+    SearchResult find(SearchRequest request);
 }
