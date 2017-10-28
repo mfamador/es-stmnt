@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.mfamador</groupId>
-    <artifactId>esa</artifactId>
+    <artifactId>saa</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>ESA</name>
-    <description>ES Sentiment API</description>
+    <name>SAA</name>
+    <description>Sentiment Analysis API</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

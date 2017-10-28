@@ -25,12 +25,8 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 @Service
 public class DocumentServiceImpl implements DocumentService {
 
-    private TransportClient client;
-
     @Autowired
-    public void setClient(TransportClient client) {
-        this.client = client;
-    }
+    private TransportClient client;
 
     public SearchResult find(SearchRequest request) {
 
@@ -56,37 +52,34 @@ public class DocumentServiceImpl implements DocumentService {
               .setSize(request.getSize() > 100 ? 100 : request.getSize())
               .setQuery(query);
 
-            if (request.getCloud() > 0) {
-                searchRequest.addAggregation(AggregationBuilders.terms("cloud")
-                    .field("keyPhrases")
-                    .order(Terms.Order.count(false)) // unnecessary
-                    .size(request.getCloud()));
-            }
+            if (request.getCloud() > 0)
+                searchRequest.addAggregation(AggregationBuilders
+                  .terms("cloud")
+                  .field("keyPhrases")
+                  .order(Terms.Order.count(false)) // unnecessary
+                  .size(request.getCloud()));
 
             SearchResponse response = searchRequest.get();
 
-            if (request.getCloud() > 0) {
+            if (request.getCloud() > 0)
                 response.getAggregations().asMap().entrySet().forEach(e -> {
-                      if ("cloud".equals(e.getKey())) {
-                          ((StringTerms) e.getValue()).getBuckets()
-                            .forEach(b -> result.addKeyPhrase((String) b.getKey(), b.getDocCount()));
-                      }
-                  });
-            }
+                    if ("cloud".equals(e.getKey()))
+                        ((StringTerms) e.getValue()).getBuckets().forEach(b -> result
+                          .addKeyPhrase((String) b.getKey(), b.getDocCount()));
+                });
 
             response.getHits().forEach(hit -> {
                 Document doc = new Document();
                 doc.setId(hit.getId());
                 hit.getSourceAsMap().entrySet().forEach(e -> {
-                    if ("title".equals(e.getKey())) {
+                    if ("title".equals(e.getKey()))
                         doc.setTitle((String) e.getValue());
-                    } else if ("body".equals(e.getKey())) {
+                    else if ("body".equals(e.getKey()))
                         doc.setBody((String) e.getValue());
-                    } else if ("sentiment".equals(e.getKey())) {
+                    else if ("sentiment".equals(e.getKey()))
                         doc.setSentiment((String) e.getValue());
-                    } else if ("keyPhrases".equals(e.getKey())) {
+                    else if ("keyPhrases".equals(e.getKey()))
                         doc.setKeyPhrases((List<String>) e.getValue());
-                    }
                 });
                 result.addDoc(doc);
             });

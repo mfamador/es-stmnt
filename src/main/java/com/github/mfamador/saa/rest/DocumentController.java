@@ -18,12 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/saa")
 public class DocumentController {
 
-    private DocumentService service;
-
     @Autowired
-    public void setDocumentServiceImpl(DocumentServiceImpl service) {
-        this.service = service;
-    }
+    private DocumentService service;
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<SearchResult> search(@RequestBody SearchRequest request) {
