@@ -39,7 +39,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         if (client != null) {
             BoolQueryBuilder query = boolQuery()
-            .must(request.getQuery() != null ?
+            .must(request.getQuery() != null && !request.getQuery().isEmpty() ?
               queryStringQuery(request.getQuery()).field("title").field("body") :
               matchAllQuery());
 

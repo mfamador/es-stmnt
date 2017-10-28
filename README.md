@@ -1,9 +1,6 @@
 # Sentiment analysis API
 
-Spring Boot and Elasticsearch API
-
-
-### Getting started
+#### Getting started
 
 Start the ES container
 
@@ -36,7 +33,7 @@ Invoking the API
 ```
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
     "from": 0, "size": 100,
-    "query": "a AND b AND c",
+    "query": "a AND b AND c",`
     "sentiment": "n,v,p",
     "cloud": 10
 }'
@@ -48,7 +45,16 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 }'
 ```
 
-Request default values:
+Count documents
+
+```
+curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
+    "size": 0, "cloud": 0
+}'
+```
+
+Default values:
+
 ```
 - from: 0
 - size: 25
