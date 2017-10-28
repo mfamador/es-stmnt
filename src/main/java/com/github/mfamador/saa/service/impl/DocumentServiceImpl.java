@@ -39,7 +39,9 @@ public class DocumentServiceImpl implements DocumentService {
 
         if (client != null) {
             BoolQueryBuilder query = boolQuery()
-              .must(queryStringQuery(request.getQuery()).field("title").field("body"));
+            .must(request.getQuery() != null ?
+              queryStringQuery(request.getQuery()).field("title").field("body") :
+              matchAllQuery());
 
             if (request.getSentiment() != null && !request.getSentiment().isEmpty()) {
                 String[] sentiments = request.getSentiment().split(",");
