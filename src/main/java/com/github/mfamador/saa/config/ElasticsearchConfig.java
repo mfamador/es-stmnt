@@ -37,8 +37,8 @@ public class ElasticsearchConfig {
                 InetAddress.getByName(environment.getProperty("elasticsearch.host")),
                 Integer.parseInt(environment.getProperty("elasticsearch.port"))));
 
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+        } catch (UnknownHostException ex) {
+            log.error(ex.getMessage());
         }
 
         return client;

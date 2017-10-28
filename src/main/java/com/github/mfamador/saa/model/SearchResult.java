@@ -13,13 +13,13 @@ public class SearchResult {
     private List<KeyPhrase> cloud;
 
     public void addDoc(Document document) {
-        if(documents == null) documents = new ArrayList<>();
+        if (documents == null) documents = new ArrayList<>();
 
         documents.add(document);
     }
 
     public void addKeyPhrase(String key, long docCount) {
-        if(cloud == null) cloud = new ArrayList<>();
+        if (cloud == null) cloud = new ArrayList<>();
 
         cloud.add(new KeyPhrase(key, docCount));
     }

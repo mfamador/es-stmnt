@@ -45,6 +45,14 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 }'
 ```
 
+Search only in one field
+
+```
+curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
+    "query": "title: a"
+}'
+```
+
 Count documents
 
 ```
