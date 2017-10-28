@@ -1,10 +1,9 @@
 package com.github.mfamador.saa.service;
 
-import com.github.mfamador.saa.model.Document;
-
-import java.util.List;
+import com.github.mfamador.saa.model.SAARequest;
+import com.github.mfamador.saa.model.SAAResponse;
 
 public interface DocumentService {
 
-     List<Document> findAll();
+    SAAResponse find(SAARequest request);
 }

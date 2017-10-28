@@ -1,21 +1,21 @@
 package com.github.mfamador.saa.rest;
 
-import com.github.mfamador.saa.model.Document;
+import com.github.mfamador.saa.model.SAARequest;
+import com.github.mfamador.saa.model.SAAResponse;
 import com.github.mfamador.saa.service.DocumentService;
 import com.github.mfamador.saa.service.impl.DocumentServiceImpl;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Log4j
 @RestController
-@RequestMapping("/saa/")
+@RequestMapping("/saa")
 public class DocumentController {
 
     private DocumentService service;
@@ -25,10 +25,11 @@ public class DocumentController {
         this.service = service;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<Document>> findAll() {
+    @RequestMapping(method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<SAAResponse> create(@RequestBody SAARequest request) {
 
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+        log.debug("find request: " + request);
+
+        return new ResponseEntity<SAAResponse>(service.find(request), HttpStatus.CREATED);
     }
-
 }

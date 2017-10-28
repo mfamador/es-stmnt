@@ -1,7 +1,7 @@
 
 ## Test query
 
-## if we want (is asked) to use query string
+## if we want to use query string
 curl -XPOST 'http://localhost:9200/documents/_search?pretty' -d '{
     "from": 0, "size": 100,
     "query": {

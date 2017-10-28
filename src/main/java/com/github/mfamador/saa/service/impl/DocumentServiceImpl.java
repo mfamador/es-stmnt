@@ -1,11 +1,13 @@
 package com.github.mfamador.saa.service.impl;
 
 import com.github.mfamador.saa.model.Document;
+import com.github.mfamador.saa.model.SAARequest;
+import com.github.mfamador.saa.model.SAAResponse;
 import com.github.mfamador.saa.service.DocumentService;
 import lombok.extern.log4j.Log4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
@@ -13,11 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Log4j
 @Service
@@ -30,8 +31,10 @@ public class DocumentServiceImpl implements DocumentService {
         this.client = client;
     }
 
-    public List<Document> findAll() {
-        log.debug("list all records");
+
+    public SAAResponse find(SAARequest request) {
+
+        SAAResponse result = new SAAResponse();
 
         List<Document> docList = new ArrayList<>();
 
@@ -55,33 +58,37 @@ public class DocumentServiceImpl implements DocumentService {
                 }'
              */
 
+            BoolQueryBuilder bqb = boolQuery().must(queryStringQuery(request.getQuery()).field("title").field("body"));
+
+            if (request.getSentiment() != null && !request.getSentiment().isEmpty()) {
+                String[] sentiments = request.getSentiment().split(",");
+
+                BoolQueryBuilder fbqb = boolQuery();
+                for(String sentiment : sentiments) {
+                    fbqb.should(termQuery("sentiment", sentiment));
+                }
+
+                bqb.filter(fbqb);
+            }
+
             SearchResponse response = client
               .prepareSearch("documents")
               .setTypes("document")
               .setFrom(0)
               .setSize(100)
-              .setQuery(boolQuery()
-                .must(
-                  queryStringQuery("volvo AND 60").field("title").field("body"))
-                .filter(
-                  boolQuery()
-                    .should(termQuery("sentiment", "v"))
-                    .should(termQuery("sentiment", "n"))
-                  ))
+              .setQuery(bqb)
               .addAggregation(
                 AggregationBuilders.terms("cloud").field("keyPhrases")
               )
               .get();
 
-            log.debug("total hits: " + response.getHits().getTotalHits());
-
             response.getAggregations()
               .asMap()
               .entrySet().stream()
               .forEach(e -> {
-                  if("cloud".equals(e.getKey())) {
+                  if ("cloud".equals(e.getKey())) {
 
-                      ((StringTerms)e.getValue()).getBuckets().forEach(b -> {
+                      ((StringTerms) e.getValue()).getBuckets().forEach(b -> {
                           log.debug(b.getKey() + " - " + b.getDocCount());
                       });
                   }
@@ -104,12 +111,14 @@ public class DocumentServiceImpl implements DocumentService {
 
                 docList.add(doc);
             }
+
+            log.debug("total hits: " + response.getHits().getTotalHits());
         }
 
         docList.forEach(d -> {
             log.debug("doc : " + d.getTitle() + " (" + d.getSentiment() + ")");
         });
 
-        return docList;
+        return result;
     }
 }
