@@ -1,7 +1,6 @@
 package com.github.mfamador.saa.config;
 
 import lombok.extern.log4j.Log4j;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -29,7 +28,8 @@ public class ElasticsearchConfig {
         log.debug("host: " + environment.getProperty("elasticsearch.host"));
         log.debug("port: " + environment.getProperty("elasticsearch.port"));
 
-        Settings settings = Settings.builder().put("cluster.name", environment.getProperty("elasticsearch.cluster-name")).build();
+        Settings settings = Settings.builder()
+          .put("cluster.name", environment.getProperty("elasticsearch.cluster-name")).build();
 
         try {
             client = new PreBuiltTransportClient(settings)
@@ -43,5 +43,4 @@ public class ElasticsearchConfig {
 
         return client;
     }
-
 }

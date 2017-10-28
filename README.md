@@ -8,7 +8,7 @@ Spring Boot and Elasticsearch API
 Start the ES container
 
 ```
-docker run -d --name=hct-es -p 9200:9200 -p 9300:9300 ES-IMG # replace ES-IMG with populated es image
+docker run -d --name=hct-es -p 9200:9200 -p 9300:9300 ES-IMG:latest # replace with correct image name
 ```
 
 Example doc
@@ -37,8 +37,8 @@ Invoking the API
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
     "from": 0, "size": 100,
     "query": "a AND b AND c",
-    "sentiment": "n,v",
-    "cloudSize": 10
+    "sentiment": "n,v,p",
+    "cloud": 10
 }'
 ```
 
@@ -51,6 +51,6 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 Request default values:
 ```
 - from: 0
-- size: 50
-- cloudSize: 5`
-``
+- size: 25
+- cloud: 10
+```

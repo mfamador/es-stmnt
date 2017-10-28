@@ -14,6 +14,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,8 @@ public class DocumentServiceImpl implements DocumentService {
         SearchResult result = new SearchResult();
 
         if (client != null) {
-            BoolQueryBuilder query = boolQuery().must(queryStringQuery(request.getQuery()).field("title").field("body"));
+            BoolQueryBuilder query = boolQuery()
+              .must(queryStringQuery(request.getQuery()).field("title").field("body"));
 
             if (request.getSentiment() != null && !request.getSentiment().isEmpty()) {
                 String[] sentiments = request.getSentiment().split(",");
@@ -53,22 +55,24 @@ public class DocumentServiceImpl implements DocumentService {
               .setSize(request.getSize() > 100 ? 100 : request.getSize())
               .setQuery(query);
 
-            if (request.getCloudSize() > 0)
+            if (request.getCloud() > 0) {
                 searchRequest
                   .addAggregation(AggregationBuilders.terms("cloud")
-                    .field("keyPhrases").size(request.getCloudSize()));
+                    .field("keyPhrases")
+                    .order(Terms.Order.count(false)) // unnecessary
+                    .size(request.getCloud()));
+            }
 
             SearchResponse response = searchRequest.get();
 
-            if (request.getCloudSize() > 0) {
+            if (request.getCloud() > 0) {
                 response.getAggregations()
                   .asMap()
-                  .entrySet().stream()
+                  .entrySet()
                   .forEach(e -> {
                       if ("cloud".equals(e.getKey())) {
-                          ((StringTerms) e.getValue()).getBuckets().forEach(b -> {
-                              result.addKeyPhrase((String) b.getKey(), b.getDocCount());
-                          });
+                          ((StringTerms) e.getValue()).getBuckets()
+                            .forEach(b -> result.addKeyPhrase((String) b.getKey(), b.getDocCount()));
                       }
                   });
             }
@@ -76,7 +80,7 @@ public class DocumentServiceImpl implements DocumentService {
             for (SearchHit hit : response.getHits()) {
                 Document doc = new Document();
                 doc.setId(hit.getId());
-                hit.getSourceAsMap().entrySet().stream().forEach(e -> {
+                hit.getSourceAsMap().entrySet().forEach(e -> {
                     if ("title".equals(e.getKey())) {
                         doc.setTitle((String) e.getValue());
                     } else if ("body".equals(e.getKey())) {

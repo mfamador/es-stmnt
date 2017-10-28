@@ -26,10 +26,10 @@ public class DocumentController {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<SearchResult> create(@RequestBody SearchRequest request) {
+    public ResponseEntity<SearchResult> search(@RequestBody SearchRequest request) {
 
         log.debug("request: " + request);
 
-        return new ResponseEntity<SearchResult>(service.find(request), HttpStatus.CREATED);
+        return new ResponseEntity<>(service.find(request), HttpStatus.CREATED);
     }
 }
