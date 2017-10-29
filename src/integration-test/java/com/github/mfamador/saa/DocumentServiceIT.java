@@ -2,15 +2,12 @@ package com.github.mfamador.saa;
 
 import com.github.mfamador.saa.model.SearchRequest;
 import com.github.mfamador.saa.model.SearchResult;
-import com.github.mfamador.saa.service.impl.DocumentServiceImpl;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import static org.junit.Assert.assertTrue;
 
@@ -20,35 +17,35 @@ import static org.junit.Assert.assertTrue;
 public class DocumentServiceIT {
 
     @Autowired
-    private DocumentServiceImpl service;
+    private DocumentService service;
 
     @Test
     public void GetAllDocumentTest() {
 
-        SearchResult searchResult = service.find(new SearchRequest(0, 200, "", "", 10));
+        SearchResult searchResult = service.find(new SearchRequest(0, 2, "", "", 1));
 
         assertTrue(searchResult.getCount() > 0);
-        assertTrue(searchResult.getDocuments().size() <= 100);
-        assertTrue(searchResult.getCloud().size() == 10);
+        assertTrue(searchResult.getDocuments().size() <= 3);
+        assertTrue(searchResult.getCloud().size() == 1);
     }
 
     @Test
     public void GetOnlyDocumentsTest() {
 
-        SearchResult searchResult = service.find(new SearchRequest(0, 200, "", "", 0));
+        SearchResult searchResult = service.find(new SearchRequest(0, 2, "", "", 0));
 
         assertTrue(searchResult.getCount() > 0);
-        assertTrue(searchResult.getDocuments().size() <= 100);
+        assertTrue(searchResult.getDocuments().size() <= 3);
         assertTrue(searchResult.getCloud() == null);
     }
 
     @Test
-    public void Get10DocumentsTest() {
+    public void Get2DocumentsTest() {
 
-        SearchResult searchResult = service.find(new SearchRequest(0, 10, "", "", null));
+        SearchResult searchResult = service.find(new SearchRequest(0, 1, "", "", null));
 
         assertTrue(searchResult.getCount() > 0);
-        assertTrue(searchResult.getDocuments().size() == 10);
+        assertTrue(searchResult.getDocuments().size() == 1);
     }
 
     @Test
@@ -60,5 +57,4 @@ public class DocumentServiceIT {
         assertTrue(searchResult.getDocuments() == null);
         assertTrue(searchResult.getCloud() == null);
     }
-
 }

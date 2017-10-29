@@ -1,6 +1,6 @@
 # Sentiment analysis API
 
-#### Getting started
+#### Test application
 
 Run integration tests
 
@@ -8,18 +8,19 @@ Run integration tests
 mvn verify
 ```
 
+Run unit tests
+
+```
+mvn test
+```
+
+#### Run application
+
 
 Start the ES container
 
 ```
 mvn docker:start
-```
-
-
-Stop the ES container
-
-```
-mvn docker:stop
 ```
 
 Example doc
@@ -83,3 +84,8 @@ Default values:
 - cloud: 10
 ```
 
+Stop the ES container
+
+```
+mvn docker:stop
+```
