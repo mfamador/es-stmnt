@@ -8,8 +8,16 @@ import lombok.Data;
 public class SearchRequest {
 
     private int from;
-    private Integer size = 25;
+    private Integer size;
     private String query;
     private String sentiment;
-    private Integer cloud = 10;
+    private Integer cloud;
+
+    public Integer getSize() {
+        return size != null ? size : 25;
+    }
+
+    public Integer getCloud() {
+        return cloud != null ? cloud : 5;
+    }
 }

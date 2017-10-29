@@ -52,7 +52,7 @@ public class DocumentServiceImpl implements DocumentService {
               .setSize(request.getSize() == null || request.getSize() > 100 ? 100 : request.getSize())
               .setQuery(query);
 
-            if (request.getCloud() != null && request.getCloud() > 0)
+            if (request.getCloud() > 0)
                 searchRequest.addAggregation(AggregationBuilders
                   .terms("cloud")
                   .field("keyPhrases")
@@ -61,7 +61,7 @@ public class DocumentServiceImpl implements DocumentService {
 
             SearchResponse response = searchRequest.get();
 
-            if (request.getCloud() != null && request.getCloud() > 0)
+            if (request.getCloud() > 0)
                 response.getAggregations().asMap().entrySet().forEach(e -> {
                     if ("cloud".equals(e.getKey()))
                         ((StringTerms) e.getValue()).getBuckets().forEach(b -> result

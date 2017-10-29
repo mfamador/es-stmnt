@@ -60,7 +60,7 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 }'
 ```
 
-Search only in one field
+Search only in title
 
 ```
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{

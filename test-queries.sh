@@ -1,6 +1,6 @@
+#!/bin/bash
 
-## Test query
-
+## test query
 curl -XPOST 'http://localhost:9200/documents/_search?pretty' -d '{
       "from": 0,
       "size": 100,
