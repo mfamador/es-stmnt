@@ -21,6 +21,12 @@
         <spring-data-elasticsearch-version>3.0.1.RELEASE</spring-data-elasticsearch-version>
         <log4j-version>2.9.1</log4j-version>
         <jackson-version>2.9.2</jackson-version>
+        <fabric8-docker-version>0.22.1</fabric8-docker-version>
+        <!-- 2.20.1 maven-failsafe-plugin DOESN'T WORK!!!!!!!! -->
+        <maven-failsafe-version>2.18.1</maven-failsafe-version>
+        <maven-surefire-plugin-version>2.20.1</maven-surefire-plugin-version>
+
+        <elasticsearch.url>http://localhost:9200</elasticsearch.url>
     </properties>
 
     <parent>
@@ -85,6 +91,76 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${fabric8-docker-version}</version>
+
+                <configuration>
+                    <images>
+                        <image>
+                            <alias>el-hct</alias>
+                            <name>meltwater/horace-coding-test:latest</name>
+                            <run>
+                                <ports>
+                                    <port>9200:9200</port>
+                                    <port>9300:9300</port>
+                                </ports>
+                                <wait>
+                                    <time>30000</time>
+                                    <http>
+                                        <url>
+                                            ${elasticsearch.url}/_cluster/health?wait_for_status=yellow&amp;timeout=120s
+                                        </url>
+                                        <method>GET</method>
+                                        <status>200</status>
+                                    </http>
+                                </wait>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>start-es</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>stop-es</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-version}</version>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

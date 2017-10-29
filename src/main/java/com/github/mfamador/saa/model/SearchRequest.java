@@ -1,8 +1,10 @@
 package com.github.mfamador.saa.model;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
+@Data
+@AllArgsConstructor
 public class SearchRequest {
 
     private int from;

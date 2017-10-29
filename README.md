@@ -2,10 +2,24 @@
 
 #### Getting started
 
+Run integration tests
+
+```
+mvn verify
+```
+
+
 Start the ES container
 
 ```
-docker run -d --name=hct-es -p 9200:9200 -p 9300:9300 ES-IMG:latest # replace with correct image name
+mvn docker:start
+```
+
+
+Stop the ES container
+
+```
+mvn docker:stop
 ```
 
 Example doc
@@ -68,3 +82,4 @@ Default values:
 - size: 25
 - cloud: 10
 ```
+
