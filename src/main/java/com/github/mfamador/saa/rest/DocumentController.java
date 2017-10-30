@@ -3,7 +3,6 @@ package com.github.mfamador.saa.rest;
 import com.github.mfamador.saa.model.SearchRequest;
 import com.github.mfamador.saa.model.SearchResult;
 import com.github.mfamador.saa.service.DocumentService;
-import com.github.mfamador.saa.service.impl.DocumentServiceImpl;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

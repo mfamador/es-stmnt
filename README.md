@@ -48,7 +48,7 @@ Invoking the API
 ```
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
     "from": 0, "size": 100,
-    "query": "a AND b AND c",`
+    "query": "a AND b AND c",
     "sentiment": "n,v,p",
     "cloud": 10
 }'
