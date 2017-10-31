@@ -34,7 +34,7 @@ public class DocumentControllerIT {
     @Test
     public void DocumentControllerTest() {
 
-        SearchRequest request = new SearchRequest(0, 1, "Volvo", "m,v,p", 1);
+        SearchRequest request = new SearchRequest(0, 1, "another", "m,v,p", 1);
 
         HttpEntity<SearchRequest> req = new HttpEntity<SearchRequest>(request, headers);
 

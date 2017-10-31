@@ -97,7 +97,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <alias>hct-es</alias>
+                            <alias>saa-es</alias>
                             <name>marcoamador/saa-es:latest</name>
                             <run>
                                 <ports>

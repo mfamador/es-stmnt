@@ -8,7 +8,7 @@ curl -XPOST 'http://localhost:9200/documents/_search?pretty' -d '{
         "bool": {
             "must": [{
                 "query_string": {
-                    "query": "volvo AND v60",
+                    "query": "a OR b",
   	                "fields": ["title", "body"]}}],
             "filter": {
                 "bool": {
@@ -26,7 +26,7 @@ curl -XPOST 'http://localhost:9200/documents/_search?pretty' -d '{
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
      "from": 0,
      "size": 100,
-     "query": "volvo AND v60",
+     "query": "a AND b",
      "sentiment": "v,n",
      "cloud":3
 }'
