@@ -98,7 +98,7 @@
                     <images>
                         <image>
                             <alias>hct-es</alias>
-                            <name>meltwater/horace-coding-test:latest</name>
+                            <name>marcoamador/saa-es:latest</name>
                             <run>
                                 <ports>
                                     <port>9200:9200</port>
