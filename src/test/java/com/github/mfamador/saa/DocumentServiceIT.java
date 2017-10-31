@@ -2,6 +2,7 @@ package com.github.mfamador.saa;
 
 import com.github.mfamador.saa.model.SearchRequest;
 import com.github.mfamador.saa.model.SearchResult;
+import com.github.mfamador.saa.service.DocumentService;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,8 +54,9 @@ public class DocumentServiceIT {
 
         SearchResult searchResult = service.find(new SearchRequest(0, 0, "", "", null));
 
+        log.debug(searchResult);
         assertTrue(searchResult.getCount() > 0);
         assertTrue(searchResult.getDocuments() == null);
-        assertTrue(searchResult.getCloud() == null);
+        assertTrue(searchResult.getCloud() != null);
     }
 }
