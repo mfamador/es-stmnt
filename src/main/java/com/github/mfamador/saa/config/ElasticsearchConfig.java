@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
 
 @Log4j
 @Configuration
-public class ElasticsearchConfig {
+class ElasticsearchConfig {
 
     @Resource
     private Environment environment;

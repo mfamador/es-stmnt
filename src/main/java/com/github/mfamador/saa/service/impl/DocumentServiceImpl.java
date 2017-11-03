@@ -40,10 +40,10 @@ public class DocumentServiceImpl implements DocumentService {
 
             if (request.getSentiment() != null && !request.getSentiment().isEmpty()) {
                 String[] sentiments = request.getSentiment().split(",");
-                BoolQueryBuilder fbqb = boolQuery();
+                BoolQueryBuilder filter = boolQuery();
                 for (String sentiment : sentiments)
-                    fbqb.should(termQuery("sentiment", sentiment));
-                query.filter(fbqb);
+                    filter.should(termQuery("sentiment", sentiment));
+                query.filter(filter);
             }
 
             SearchRequestBuilder searchRequest = client.prepareSearch("documents")
@@ -62,24 +62,24 @@ public class DocumentServiceImpl implements DocumentService {
             SearchResponse response = searchRequest.get();
 
             if (request.getCloud() > 0)
-                response.getAggregations().asMap().entrySet().forEach(e -> {
-                    if ("cloud".equals(e.getKey()))
-                        ((StringTerms) e.getValue()).getBuckets().forEach(b -> result
+                response.getAggregations().asMap().forEach((key, value) -> {
+                    if ("cloud".equals(key))
+                        ((StringTerms) value).getBuckets().forEach(b -> result
                           .addKeyPhrase((String) b.getKey(), b.getDocCount()));
                 });
 
             response.getHits().forEach(hit -> {
                 Document doc = new Document();
                 doc.setId(hit.getId());
-                hit.getSourceAsMap().entrySet().forEach(e -> {
-                    if ("title".equals(e.getKey()))
-                        doc.setTitle((String) e.getValue());
-                    else if ("body".equals(e.getKey()))
-                        doc.setBody((String) e.getValue());
-                    else if ("sentiment".equals(e.getKey()))
-                        doc.setSentiment((String) e.getValue());
-                    else if ("keyPhrases".equals(e.getKey()))
-                        doc.setKeyPhrases((List<String>) e.getValue());
+                hit.getSourceAsMap().forEach((key, value) -> {
+                    if ("title".equals(key))
+                        doc.setTitle((String) value);
+                    else if ("body".equals(key))
+                        doc.setBody((String) value);
+                    else if ("sentiment".equals(key))
+                        doc.setSentiment((String) value);
+                    else if ("keyPhrases".equals(key))
+                        doc.setKeyPhrases((List<String>) value);
                 });
                 result.addDoc(doc);
             });

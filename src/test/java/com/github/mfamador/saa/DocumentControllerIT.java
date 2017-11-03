@@ -24,9 +24,9 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class DocumentControllerIT {
 
-    TestRestTemplate restTemplate = new TestRestTemplate();
+    private final TestRestTemplate restTemplate = new TestRestTemplate();
 
-    HttpHeaders headers = new HttpHeaders();
+    private final HttpHeaders headers = new HttpHeaders();
 
     @LocalServerPort
     private int port;
@@ -36,7 +36,7 @@ public class DocumentControllerIT {
 
         SearchRequest request = new SearchRequest(0, 1, "another", "m,v,p", 1);
 
-        HttpEntity<SearchRequest> req = new HttpEntity<SearchRequest>(request, headers);
+        HttpEntity<SearchRequest> req = new HttpEntity<>(request, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
           createURLWithPort("/saa"),
