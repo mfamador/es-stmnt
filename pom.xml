@@ -17,8 +17,7 @@
         <java.version>1.8</java.version>
         <lombok-version>1.16.18</lombok-version>
         <swagger-version>2.7.0</swagger-version>
-        <elasticsearch-version>5.5.2</elasticsearch-version>
-        <spring-data-elasticsearch-version>3.0.1.RELEASE</spring-data-elasticsearch-version>
+        <elasticsearch-version>6.0.0</elasticsearch-version>
         <log4j-version>2.9.1</log4j-version>
         <jackson-version>2.9.2</jackson-version>
         <fabric8-docker-version>0.22.1</fabric8-docker-version>

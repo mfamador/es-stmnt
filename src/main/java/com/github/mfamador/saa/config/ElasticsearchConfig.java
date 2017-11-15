@@ -3,7 +3,7 @@ package com.github.mfamador.saa.config;
 import lombok.extern.log4j.Log4j;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +33,7 @@ class ElasticsearchConfig {
 
         try {
             client = new PreBuiltTransportClient(settings)
-              .addTransportAddress(new InetSocketTransportAddress(
+              .addTransportAddress(new TransportAddress(
                 InetAddress.getByName(environment.getProperty("elasticsearch.host")),
                 Integer.parseInt(environment.getProperty("elasticsearch.port"))));
 

@@ -12,8 +12,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
                 searchRequest.addAggregation(AggregationBuilders
                   .terms("cloud")
                   .field("keyPhrases")
-                  .order(Terms.Order.count(false)) // unnecessary
+                  .order(BucketOrder.count(false))
                   .size(request.getCloud()));
 
             SearchResponse response = searchRequest.get();
