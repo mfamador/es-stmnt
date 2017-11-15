@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## test query
-curl -XPOST 'http://localhost:9200/documents/_search?pretty' -d '{
+curl -XPOST 'http://localhost:9200/documents/_search?pretty' -H 'Content-Type: application/json' -d '{
     "from": 0,
     "size": 100,
     "query": {
