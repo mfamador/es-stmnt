@@ -50,6 +50,15 @@ public class DocumentServiceIT {
     }
 
     @Test
+    public void GetDocumentsNoHitsTest() {
+
+        SearchResult searchResult = service.find(new SearchRequest(0, 1, "xpto-wont-find", "", null));
+
+        assertTrue(searchResult.getCount() == 0);
+        assertTrue(searchResult.getDocuments() == null);
+    }
+
+    @Test
     public void Get1DocumentCountOnlyTest() {
 
         SearchResult searchResult = service.find(new SearchRequest(0, 0, "", "", null));

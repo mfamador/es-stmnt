@@ -26,7 +26,7 @@ curl -XPOST 'http://localhost:9200/documents/_search?pretty' -H 'Content-Type: a
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
      "from": 0,
      "size": 100,
-     "query": "a AND b",
+     "query": "a OR b",
      "sentiment": "v,n",
      "cloud":3
 }'

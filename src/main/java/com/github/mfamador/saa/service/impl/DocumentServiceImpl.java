@@ -11,9 +11,11 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.BucketOrder;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,23 +54,26 @@ public class DocumentServiceImpl implements DocumentService {
               .setSize(request.getSize() == null || request.getSize() > 100 ? 100 : request.getSize())
               .setQuery(query);
 
-            if (request.getCloud() > 0)
+            if (request.getCloud() > 0) {
                 searchRequest.addAggregation(AggregationBuilders
                   .terms("cloud")
                   .field("keyPhrases")
                   .order(BucketOrder.count(false))
                   .size(request.getCloud()));
+            }
 
             SearchResponse response = searchRequest.get();
 
-            if (request.getCloud() > 0)
-                response.getAggregations().asMap().forEach((key, value) -> {
-                    if ("cloud".equals(key))
-                        ((StringTerms) value).getBuckets().forEach(b -> result
-                          .addKeyPhrase((String) b.getKey(), b.getDocCount()));
+            Aggregations aggs = response.getAggregations();
+            if (aggs != null) {
+                Terms terms = response.getAggregations().get("cloud");
+                terms.getBuckets().forEach(b -> {
+                    result.addKeyPhrase((String) b.getKey(), b.getDocCount());
                 });
+            }
 
-            response.getHits().forEach(hit -> {
+            SearchHits hits = response.getHits();
+            hits.forEach(hit -> {
                 Document doc = new Document();
                 doc.setId(hit.getId());
                 hit.getSourceAsMap().forEach((key, value) -> {
@@ -83,7 +88,7 @@ public class DocumentServiceImpl implements DocumentService {
                 });
                 result.addDoc(doc);
             });
-            result.setCount(response.getHits().getTotalHits());
+            result.setCount(hits.getTotalHits());
         }
 
         ObjectMapper mapper = new ObjectMapper();
