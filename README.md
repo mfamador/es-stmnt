@@ -1,29 +1,29 @@
-# Sentiment analysis API - Spring Boot and Elasticsearch Test
+# Sentiment analysis API
+## Spring Boot and Elasticsearch Test
 
-#### Test application
+### Test application
 
-Run integration tests
+#### Run integration tests
 
 ```
 mvn verify
 ```
 
-Run unit tests
+#### Run unit tests
 
 ```
 mvn test
 ```
 
-#### Run application
+### Run application
 
-
-Start the ES container
+#### Start the ES container
 
 ```
 mvn docker:start
 ```
 
-Example doc
+#### Example doc
 
 ```json
 {
@@ -37,13 +37,13 @@ Example doc
 }
 ```
 
-Running locally
+#### Running locally
 
 ```
 mvn spring-boot:run
 ```
 
-Invoking the API
+### Invoking the API
 
 ```
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
@@ -60,7 +60,7 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 }'
 ```
 
-Search only in title
+#### Search only in title
 
 ```
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
@@ -68,7 +68,7 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 }'
 ```
 
-Count documents
+#### Count documents
 
 ```
 curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
@@ -76,7 +76,7 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 }'
 ```
 
-Default values:
+#### Default values
 
 ```
 - from: 0
@@ -84,7 +84,7 @@ Default values:
 - cloud: 10
 ```
 
-Stop the ES container
+#### Stop the ES container
 
 ```
 mvn docker:stop
