@@ -39,8 +39,8 @@ public class DocumentControllerIT {
         HttpEntity<SearchRequest> req = new HttpEntity<>(request, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-          createURLWithPort("/saa"),
-          HttpMethod.POST, req, String.class);
+                createURLWithPort("/saa"),
+                HttpMethod.POST, req, String.class);
 
         assertTrue(response.getStatusCodeValue() < 300);
 
