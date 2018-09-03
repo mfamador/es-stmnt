@@ -87,5 +87,5 @@ curl -XPOST http://localhost:8080/saa -H 'Content-Type: application/json' -d '{
 #### Stop the ES container
 
 ```
-mvn docker:stop
+mvn docker:stop 
 ```
