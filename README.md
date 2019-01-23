@@ -35,7 +35,7 @@ mvn docker:start
         "xpto3"],
     "sentiment": "n"
 }
-``
+```
 
 #### Running locally
 
