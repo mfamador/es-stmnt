@@ -1,5 +1,5 @@
 # Sentiment analysis API
-## Spring Boot and Elasticsearch Test
+## Spring Boot and Elasticsearch
 
 ### Test application
 
